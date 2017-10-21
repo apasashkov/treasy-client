@@ -1,0 +1,22 @@
+.dashboard {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    overflow-x: auto;
+    min-height:100% !important;
+}
+
+body {
+
+    background: url('./background.jpg');
+}
+
+html, body {
+    margin:0;
+    padding:0;
+    height:100%;
+ }
+
+ #app {
+     min-height: 100%;
+ }

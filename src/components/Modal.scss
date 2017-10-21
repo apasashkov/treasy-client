@@ -1,0 +1,9 @@
+.close-button {
+    color: gray;
+    margin-top: 8px;
+    margin-right: 8px;
+
+    &:hover {
+        color: black;
+    }
+}

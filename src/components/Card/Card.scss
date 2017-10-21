@@ -1,0 +1,11 @@
+.card {
+    margin: 2%;
+    padding: 3px;
+    user-select: none;
+    word-break: break-all;
+
+
+    &:hover {
+        background: darken(white, 5%);
+    }
+}
