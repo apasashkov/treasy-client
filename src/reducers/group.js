@@ -2,6 +2,8 @@ const groupReducerDefaultState = [];
 
 const groupReducer = (state = groupReducerDefaultState, action) => {
     switch (action.type) {
+    case 'ADD_GROUPS':
+        return [...state, ...action.groups]
     case 'ADD_GROUP':
         return [...state, action.group];
     case 'EDIT_GROUP':

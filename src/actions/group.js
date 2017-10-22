@@ -1,5 +1,33 @@
 import axios from 'axios';
 
+const addGroups = (groups) => ({
+    type: 'ADD_GROUPS',
+    groups,
+});
+
+// GET_GROUPS
+export const startGetGroups = () => {
+    // works only after redux-thunk installed
+    return (dispatch) => {
+        axios.get('http://localhost:8000/api/groups')
+        .then((response) => {
+            const groups = response.data;
+            groups.map((group) => {
+                group.groupId = group._id;
+                delete group._id;
+                group.cards.map((card) => {
+                    card.cardId = card._id;
+                    delete card._id;
+                });
+            })
+            dispatch(addGroups(groups));
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    };
+};
+
 // ADD_GROUP
 const addGroup = (group) => ({
     type: 'ADD_GROUP',

@@ -33,6 +33,7 @@ class Header extends Component {
                         <li><NavLink to="/" onClick={this.handleLogOut}>Logout</NavLink></li>
                     </div> :
                     <div>
+                        <li><NavLink to="/playground">Playground</NavLink></li>
                         <li><NavLink to="/registration">Register</NavLink></li>
                         <li><NavLink to="/login">Login</NavLink></li>
                     </div>

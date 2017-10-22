@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import { startGetGroups } from '../../actions/group';
 import AddGroupCard from '../../components/AddGroupCard/';
 import CardGroup from '../CardGroup';
 import CardModal from '../../components/CardModal';
@@ -17,6 +18,10 @@ class DashBoard extends Component {
 
     constructor(props) {
         super(props);
+    }
+
+    componentWillMount() {
+        this.props.dispatch(startGetGroups());
     }
 
     render() {
