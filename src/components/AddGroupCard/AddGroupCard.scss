@@ -1,0 +1,51 @@
+.addGroupCard {
+    background-color: rgba(226, 228, 230, 0.6);
+    color:black;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    box-sizing: border-box;
+    width: 270px;
+    margin: 10px;
+    padding: 0.5%;
+    overflow: auto;
+    flex:0 0 auto;
+
+    &:hover {
+        background-color: lighten(rgba(226, 228, 230, 0.6), 10%);
+    }
+}
+
+.addGroupCard-opened {
+    margin: 2%;
+
+    & textarea {
+        background: white;
+        border:none;
+        border-radius: 2px;
+        margin-bottom: 5px;
+        padding: 3px;
+        width: 100%;
+        resize:none;
+    }
+}
+
+.closeButton {
+    display:inline;
+    cursor: pointer;
+    position: relative;
+    margin-left: 10px;
+
+    & i {
+        position: absolute;
+        margin-top:3px;
+        color: gray;
+
+        &:hover {
+            color: black;
+        }
+
+    }
+
+}
+
