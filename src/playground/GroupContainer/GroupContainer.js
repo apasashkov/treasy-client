@@ -99,7 +99,6 @@ class GroupContainer extends Component {
       }
 
       stopScrolling() {
-        console.log('scrollStopped');
         this.setState({ isScrolling: false }, clearInterval(this.scrollInterval));
       }
 
@@ -129,11 +128,12 @@ class GroupContainer extends Component {
                         key={item.id}
                         id={item.id}
                         groupContent={item}
+
                         moveCard={this.moveCard}
-                        x={i}
                         startScrolling={this.startScrolling}
                         stopScrolling={this.stopScrolling}
                         isScrolling={this.state.isScrolling}
+                        x={i}
                     />;
                 }
                 )}

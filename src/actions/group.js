@@ -136,6 +136,40 @@ export const startEditCard = (cardId, updates) => {
     };
 };
 
+//MOVE_CARD
+export const moveCard = (newGroups) => ({
+    type: 'MOVE_CARD',
+    newGroups,
+});
+
+export const startMoveCard = (lastX, lastY, nextX, nextY) => {
+    return (dispatch, getState) => {
+        const newGroups = [...getState().groups];
+        if (lastX === nextX) {
+          newGroups[lastX].cards.splice(nextY, 0, newGroups[lastX].cards.splice(lastY, 1)[0]);
+        } else {
+          // move element to new place
+          newGroups[nextX].cards.splice(nextY, 0, newGroups[lastX].cards[lastY]);
+          // delete element from old place
+          newGroups[lastX].cards.splice(lastY, 1);
+        }
+        // return newGroups;
+        const newGroupsToServer = [ newGroups[lastX], newGroups[nextX] ].map((group) => {
+            return {
+                groupId: group.groupId,
+                cards: group.cards.map((card) => card.cardId )
+            };
+        });
+        axios.post(`http://localhost:8000/api/groups/moveCards`, newGroupsToServer)
+        .then(() => {
+            dispatch(moveCard(newGroups));
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+
+    }
+}
 
 // REMOVE_CARD
 const removeCard = ({ cardId } = {}) => ({

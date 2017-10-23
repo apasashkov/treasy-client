@@ -27,6 +27,8 @@ const groupReducer = (state = groupReducerDefaultState, action) => {
             }
             return group;
         });
+    case 'MOVE_CARD':
+        return [...action.newGroups];
     case 'REMOVE_CARD':
         return state.map((group) => {
             return {
@@ -49,7 +51,6 @@ const groupReducer = (state = groupReducerDefaultState, action) => {
                 }),
             };
         });
-
     default:
         return state;
     }
