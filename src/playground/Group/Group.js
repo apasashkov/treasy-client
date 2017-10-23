@@ -1,18 +1,14 @@
 import React, { Component } from 'react';
 import Card from '../Card/';
-import update from 'immutability-helper';
-import flow from 'lodash/flow';
 import { DropTarget } from 'react-dnd';
-import { findDOMNode } from 'react-dom';
 
 import './Group.scss';
 const CARD_HEIGHT = 100; // height of a single card(excluding marginBottom/paddingBottom)
 const OFFSET_HEIGHT = 64 + 10 + 10; //  height offset from the top of the page (header heigt + margin group + margin card)
 const CARD_MARGIN = 10; // height of a marginBottom+paddingBottom
 
-function getPlaceholderIndex(y, scrollY) {
-
-    const yPos = y - OFFSET_HEIGHT + scrollY;
+function getPlaceholderIndex(y) {
+    const yPos = y - OFFSET_HEIGHT + window.scrollY;
     let placeholderIndex;
     if (yPos < CARD_HEIGHT / 2) {
       placeholderIndex = -1; // place at the start
@@ -77,10 +73,7 @@ const cardTarget = {
       }
 
     // defines where placeholder is rendered
-    const placeholderIndex = getPlaceholderIndex(
-        monitor.getClientOffset().y,
-        findDOMNode(component).scrollTop
-      );
+    const placeholderIndex = getPlaceholderIndex(monitor.getClientOffset().y);
 
           // IMPORTANT!
     // HACK! Since there is an open bug in react-dnd, making it impossible
@@ -88,6 +81,7 @@ const cardTarget = {
     // user moves the mouse, we do this awful hack and set the state (!!)
     // on the component from here outside the component.
     // https://github.com/gaearon/react-dnd/issues/179
+    console.log('component:', component);
     component.setState({ placeholderIndex });
     // when drag begins, we hide the card and only display cardDragPreview
     const item = monitor.getItem();
@@ -100,15 +94,13 @@ const collectTarget = (connect, monitor) => ({
     isOver: monitor.isOver(),
     canDrop: monitor.canDrop(),
     item: monitor.getItem()
-  })
+});
 
 class Group extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            placeholderIndex: undefined,
-        };
+        this.state = { placeholderIndex: undefined };
     }
 
     render() {
@@ -118,6 +110,7 @@ class Group extends Component {
         let cardList = [];
 
         groupContent.cards.forEach((item, i) => {
+            console.log('i:', i);
             if (isOver && canDrop) {
               isPlaceHold = false;
               if (i === 0 && placeholderIndex === -1) {
