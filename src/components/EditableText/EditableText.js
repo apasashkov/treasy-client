@@ -20,16 +20,12 @@ const centerDiv = {
 class EditableText extends Component {
 
     static defaultProps = {
-        fieldName: '',
-        status: '',
         onSave: null,
         style: {},
         text: '',
         type: 'input',
     }
     static propTypes = {
-        status: PropTypes.string,
-        fieldName: PropTypes.string,
         onSave: PropTypes.func,
         style: PropTypes.object,
         text: PropTypes.string,
@@ -51,22 +47,10 @@ class EditableText extends Component {
         this.cancelEdit = this.cancelEdit.bind(this);
     }
 
-    // componentWillReceiveProps(nextProps) {
-    //     if (nextProps.status === 'success') {
-    //         this.setState({
-    //             saving: false,
-    //             editing: false });
-
-    //     } else if (nextProps.status === 'error') {
-    //         this.setState({
-    //             saving: false,
-    //             editing: false });
-    //     }
-    // }
-
     componentDidUpdate() {
         if(this.state.editing) {
             this.input.focus();
+            this.input.select();
         }
     }
     cancelEdit() {
@@ -157,7 +141,7 @@ class EditableText extends Component {
     render() {
         if (this.state.editing) {
             return (
-                <div>
+                <div className="editingText">
                     {this.renderEditableElement()}
                 </div>
             );

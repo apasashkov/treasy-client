@@ -81,28 +81,28 @@ class DashBoard extends Component {
 
     scrollRight() {
         function scroll() {
-            window.scrollBy(10, 0);
+            document.getElementsByClassName('dashboard')[0].scrollLeft += 10;
         }
         this.scrollInterval = setInterval(scroll, 10);
     }
 
     scrollLeft() {
         function scroll() {
-            window.scrollBy(-10, 0);
+            document.getElementsByClassName('dashboard')[0].scrollLeft -= 10;
         }
         this.scrollInterval = setInterval(scroll, 10);
     }
 
     scrollDown() {
         function scroll() {
-            window.scrollBy(0, 10);
+            document.getElementsByClassName('dashboard')[0].scrollTop += 10;
         }
         this.scrollInterval = setInterval(scroll, 10);
     }
 
     scrollUp() {
         function scroll() {
-            window.scrollBy(0, -10);
+            document.getElementsByClassName('dashboard')[0].scrollTop -= 10;
         }
         this.scrollInterval = setInterval(scroll, 10);
     }

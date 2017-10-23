@@ -20,6 +20,8 @@ class CardModal extends Component {
 
         this.state = {
             calendarFocused: false,
+            isAddingDate: false,
+            dueDate: this.props.card.dueDate,
         };
 
         this.changeCardTitle = this.changeCardTitle.bind(this);
@@ -47,7 +49,7 @@ class CardModal extends Component {
 
     renderCardDescription(description) {
         return (
-            <p>
+            <div>
                 <h5> Description: </h5>
                 <EditableText
                     onSubmit={this.changeCardDescription}
@@ -55,49 +57,52 @@ class CardModal extends Component {
                     text={description}
                     fieldName="fieldName"
                 />
-            </p>
-        )
+            </div>
+        );
     }
 
     renderCardDescriptionInput() {
         return (
-            <p style={{'textDecoration': 'underline'}}>
-            <EditableText
-                onSubmit={this.changeCardDescription}
-                type="input"
-                text={'Add description...'}
-                fieldName="fieldName"
-            />
-            </p>
-        )
-    }
-
-    renderCardDueDate(dueDate) {
-        return (
-            <div>
-            <p> Due Date: {moment(dueDate).format('YYYY MMM Do')} </p>
-            <SingleDatePicker
-                date={moment()}
-                onDateChange={this.onDateChange}
-                focused={this.state.calendarFocused}
-                onFocusChange={this.onFocusChange}
-                numberOfMonths={1}
-                isOutsideRange={(day => false)}
-            />
+            <div style={{'textDecoration': 'underline'}}>
+                <EditableText
+                    onSubmit={this.changeCardDescription}
+                    type="input"
+                    text={'Add description...'}
+                    fieldName="fieldName"
+                />
             </div>
         )
     }
 
-    renderDueDateInput() {
-        return (
-            <p style={{'textDecoration': 'underline'}}>
-                Add Due Date...
-            </p>
-        )
+    onDateChange(date) {
+        const dueDate = date.valueOf();
+        this.setState({ dueDate, });
+        this.props.dispatch(startEditCard(this.props.cardId, { dueDate, }));
     }
 
-    onDateChange() {
-        console.log(1110);
+    renderCardDueDate() {
+        return (
+            <div>
+                <div>Due date: {this.state.dueDate ? moment(this.state.dueDate).format('YYYY MMM Do') : 'No Due Date'}</div>
+                <SingleDatePicker
+                    date={this.state.dueDate ? moment(this.state.dueDate) : null}
+                    onDateChange={this.onDateChange}
+                    focused={this.state.calendarFocused}
+                    onFocusChange={this.onFocusChange}
+                    numberOfMonths={1}
+                    isOutsideRange={() => false}
+                />
+            </div>
+        );
+    }
+
+    renderDueDateInput() {
+        return (
+            <div onClick={() => this.setState({ isAddingDate: true })}
+            style={{'textDecoration': 'underline', 'cursor': 'pointer'}}>
+                Add Due Date...
+            </div>
+        )
     }
 
     onFocusChange = ({ focused }) => {
@@ -125,19 +130,17 @@ class CardModal extends Component {
                     this.renderCardDescriptionInput()
                 }
 
-                {card.dueDate ?
-                    this.renderCardDueDate(card.dueDate) :
+                { this.state.dueDate || this.state.isAddingDate ? this.renderCardDueDate(this.state.dueDate) :
                     this.renderDueDateInput()
                 }
+
                 <Link
                     className="modal-action modal-close waves-effect waves-light btn remove-button red"
                     onClick={this.removeCard}
                     to="/"
-
                 >
                     Delete
                 </Link>
-
             </Modal>
         );
     }

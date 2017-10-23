@@ -10,7 +10,9 @@
     overflow: auto;
     padding: 0.5%;
     flex:0 0 auto;
-    min-height:100% !important;
+    min-height:100px !important;
+    transition: all .5s linear !important;
+
 }
 
 .cardGroupTitle {
@@ -70,6 +72,7 @@
 .cardGroupHeader {
     display: flex;
     justify-content: space-between;
+    height: 50px;
 }
 
 .placeholder {

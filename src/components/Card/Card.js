@@ -52,6 +52,7 @@ class Card extends Component {
     render() {
         const { connectDragSource, item } = this.props;
 
+
         return connectDragSource(
             <div id={item.cardId} className="card">
                 <Link to={`/cards/id=${item.cardId}`}>
@@ -59,7 +60,7 @@ class Card extends Component {
                     {
                         item.dueDate !== 0 ?
                             <p> Due: {moment(item.dueDate).format('YYYY MMM Do')} </p> :
-                            null
+                            <p> No Due Date </p>
                     }
                 </Link>
             </div>

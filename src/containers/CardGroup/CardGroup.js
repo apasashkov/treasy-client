@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { DropTarget } from 'react-dnd';
 import PropTypes from 'prop-types';
+import { findDOMNode } from 'react-dom';
 
 import Card from '../../components/Card/';
 import EditableText from '../../components/EditableText/';
@@ -18,7 +19,9 @@ const OFFSET_HEIGHT = 64 + 46 + 10 + 10 + 6; //  height offset from the top of t
 const CARD_MARGIN = 10 + 10; // height of a marginBottom + paddingBottom
 
 function getPlaceholderIndex(y) {
-    const yPos = y - OFFSET_HEIGHT + window.scrollY;
+    document.getElementsByClassName('dashboard')[0].scrollTop;
+    // const yPos = y - OFFSET_HEIGHT + window.scrollY;
+    const yPos = y - OFFSET_HEIGHT + document.getElementsByClassName('dashboard')[0].scrollTop;
     let placeholderIndex;
     if (yPos < CARD_HEIGHT / 2) {
         placeholderIndex = -1; // place at the start

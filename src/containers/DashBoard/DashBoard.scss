@@ -3,20 +3,43 @@
     flex-direction: row;
     align-items: flex-start;
     overflow-x: auto;
-    min-height:100% !important;
+    height:calc(100vh - 64px) !important;
+    align-content: flex-start;
+    justify-content: flex-start;
+    // flex-wrap: wrap;
 }
 
 body {
 
-    // background: url('./background.jpg');
+    background: url('./background.jpg');
 }
 
 html, body {
     margin:0;
     padding:0;
-    height:100%;
  }
 
- #app {
-     min-height: 100%;
+
+
+ .modal-content {
+     float: left !important;
+     height: auto !important;
+     max-height: 100vh !important;
+     width: 100%;
+    //  position: relative;
+
+ }
+
+ .modal {
+    float: left !important;
+    height: auto !important;
+    max-height: 100vh !important;
+ }
+
+ .SingleDatePicker_picker {
+     position: relative;
+ }
+
+ .SingleDatePicker_picker__openDown {
+     top: 22px;
  }
