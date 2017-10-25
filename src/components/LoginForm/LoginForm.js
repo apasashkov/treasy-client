@@ -6,6 +6,19 @@ import { startLogIn } from '../../actions/auth';
 
 import './LoginForm.scss';
 
+const getFormError = (loginError, passwordError) => {
+    if (loginError && passwordError) {
+        return '*Login and password are required';
+    }
+    if (loginError) {
+        return '*Login is required';
+    }
+    if (passwordError) {
+        return '*Password is required';
+    }
+    return '';
+};
+
 class LoginForm extends Component {
     static propTypes = {
         dispatch: PropTypes.func,
@@ -53,7 +66,7 @@ class LoginForm extends Component {
         errors.password = target.name === 'password'
             ? target.validity.valueMissing
             : this.state.password.error;
-        const error = this.getFormError(errors.login, errors.password);
+        const error = getFormError(errors.login, errors.password);
 
         this.setState(
             {
@@ -80,21 +93,12 @@ class LoginForm extends Component {
         this.handleChange(obj);
     }
 
-
-    getFormError = (loginError, passwordError) => {
-        if (loginError && passwordError) {
-            return '*Login and password are required';
+    errorMessage(m) {
+        if (m === null) {
+            return <div style={{ display: 'inline-block' }} />
         }
-        if (loginError) {
-            return '*Login is required';
-        }
-        if (passwordError) {
-            return '*Password is required';
-        }
-        return '';
+        return <div className="LoginForm--errorText">{m}</div>
     }
-
-    errorMessage = m => m === null ? <div style={{ display: 'inline-block' }} /> : <div className="LoginForm--errorText">{m}</div>;
 
     render() {
         return (

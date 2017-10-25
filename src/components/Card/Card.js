@@ -45,10 +45,6 @@ class Card extends Component {
         history: PropTypes.object,
     }
 
-    static defaultProps = {
-        title: 'My Card',
-    }
-
     constructor(props) {
         super(props);
 
@@ -78,5 +74,9 @@ class Card extends Component {
         );
     }
 }
+
+Card.defaultProps = {
+    title: 'My Card',
+};
 
 export default DragSource('card', cardSource, collectSource)(Card);

@@ -152,11 +152,12 @@ class SignUpForm extends Component {
         },
     }
 
-    errorMessage = m => (
-        m !== null
-            ? <div className="SignupForm--errorText">{m}</div>
-            : ''
-    )
+    errorMessage(m){
+        if (m !== null) {
+            return <div className="SignupForm--errorText">{m}</div>;
+        }
+        return '';
+    }
 
     render() {
         return (

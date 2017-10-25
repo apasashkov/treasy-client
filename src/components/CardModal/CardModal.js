@@ -125,7 +125,7 @@ class CardModal extends Component {
         );
     }
 
-    onFocusChange = ({ focused }) => {
+    onFocusChange({ focused }) {
         this.setState(() => ({ calendarFocused: focused }));
     }
 

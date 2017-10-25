@@ -6,13 +6,6 @@ import './EditableText.scss';
 
 class EditableText extends Component {
 
-    static defaultProps = {
-        onSave: null,
-        style: {},
-        text: '',
-        type: '',
-        className: '',
-    }
     static propTypes = {
         className:  PropTypes.string,
         onSave: PropTypes.func,
@@ -153,5 +146,13 @@ class EditableText extends Component {
         );
     }
 }
+
+EditableText.defaultProps = {
+    onSave: null,
+    style: {},
+    text: '',
+    type: '',
+    className: '',
+};
 
 export default EditableText;

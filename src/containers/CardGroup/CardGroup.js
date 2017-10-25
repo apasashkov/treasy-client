@@ -100,9 +100,6 @@ const collectTarget = (connect, monitor) => ({
 
 
 class CardGroup extends Component {
-    static defaultProps = {
-        title: 'My Group',
-    }
 
     static propTypes = {
         canDrop: PropTypes.bool,
@@ -270,6 +267,10 @@ class CardGroup extends Component {
             </div>
         );
     }
+}
+
+CardGroup.defaultProps = {
+    title: 'My Group',
 }
 
 export default DropTarget('card', cardTarget, collectTarget)(CardGroup);
