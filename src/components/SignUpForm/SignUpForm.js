@@ -33,7 +33,7 @@ class SignUpForm extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.handlePaste = this.handlePaste.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.checkLoginExists = this.checkLoginExists.bind(this);
+        // this.checkLoginExists = this.checkLoginExists.bind(this);
         this.errorsExist = this.errorsExist.bind(this);
     }
 
@@ -152,12 +152,11 @@ class SignUpForm extends Component {
         },
     }
 
-    errorMessage(m){
-        if (m !== null) {
-            return <div className="SignupForm--errorText">{m}</div>;
-        }
-        return '';
-    }
+    errorMessage = m => (
+        m !== null
+            ? <div className="SignupForm--errorText">{m}</div>
+            : ''
+    )
 
     render() {
         return (
