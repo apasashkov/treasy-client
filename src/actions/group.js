@@ -105,7 +105,7 @@ const addCard = (groupId, card) => ({
 export const startAddCard = (groupId, cardData = {}) => {
     return (dispatch) => {
         const { cardTitle = 'My card', dueDate = 0, description = '' } = cardData;
-        const card = { cardTitle, dueDate, description };
+        const card = { cardTitle, dueDate, description, groupId, };
         const data = {
             card,
             groupId,
