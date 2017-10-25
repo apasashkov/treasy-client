@@ -4,13 +4,6 @@ import { Link } from 'react-router-dom';
 import './Modal.scss';
 
 class Modal extends Component {
-    static defaultProps = {
-        id: 'modal1',
-    }
-
-    static contextTypes = {
-        router: PropTypes.object,
-    }
 
     static propTypes = {
         id: PropTypes.string,
@@ -61,5 +54,9 @@ class Modal extends Component {
         );
     }
 }
+
+Modal.contextTypes = {
+    router: PropTypes.object,
+};
 
 export default Modal;

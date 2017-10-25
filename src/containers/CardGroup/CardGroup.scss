@@ -1,20 +1,25 @@
+@import "../../constants/constants.scss";
 .cardGroup {
     background-color: #e2e4e6;
     border: none;
     border-radius: 4px;
     box-sizing: border-box;
-    width: 270px;
+    width: 350px;
     display: flex;
     flex-direction: column;
     margin: 10px;
     overflow: auto;
-    padding: 0.5%;
+    padding: 8px;
     flex:0 0 auto;
-    min-height:100% !important;
+    min-height:100px !important;
+    transition: all .5s linear !important;
+
 }
 
 .cardGroupTitle {
-    padding: 3px;
+    // padding: 3px
+    padding-top: 3px;
+    padding-left: 10px;
     margin:2%;
     word-break: break-all;
     font-weight: bold;
@@ -62,6 +67,7 @@
 
 .removeGroupButton {
     cursor: pointer;
+    padding-top: 7px;
     &:hover {
         color:red;
     }
@@ -70,4 +76,13 @@
 .cardGroupHeader {
     display: flex;
     justify-content: space-between;
+    height: 50px;
+}
+
+.placeholder {
+    background-color: rgba(208,208,208,1);
+    border-radius: 6px;
+    height: $CARD_HEIGHT;
+    margin: 8px;
+    padding: 0px;
 }

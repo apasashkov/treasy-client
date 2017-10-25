@@ -1,12 +1,29 @@
-import axios from 'axios';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { startLogIn } from '../../actions/auth';
 
 import './LoginForm.scss';
 
+const getFormError = (loginError, passwordError) => {
+    if (loginError && passwordError) {
+        return '*Login and password are required';
+    }
+    if (loginError) {
+        return '*Login is required';
+    }
+    if (passwordError) {
+        return '*Password is required';
+    }
+    return '';
+};
+
 class LoginForm extends Component {
+    static propTypes = {
+        dispatch: PropTypes.func,
+    }
+
     constructor(props) {
         super(props);
 
@@ -49,7 +66,7 @@ class LoginForm extends Component {
         errors.password = target.name === 'password'
             ? target.validity.valueMissing
             : this.state.password.error;
-        const error = this.getFormError(errors.login, errors.password);
+        const error = getFormError(errors.login, errors.password);
 
         this.setState(
             {
@@ -76,68 +93,58 @@ class LoginForm extends Component {
         this.handleChange(obj);
     }
 
-
-    getFormError = (loginError, passwordError) => {
-        if (loginError && passwordError) {
-            return '*Login and password are required';
+    errorMessage(m) {
+        if (m === null) {
+            return <div style={{ display: 'inline-block' }} />
         }
-        if (loginError) {
-            return '*Login is required';
-        }
-        if (passwordError) {
-            return '*Password is required';
-        }
-        return '';
+        return <div className="LoginForm--errorText">{m}</div>
     }
-
-    errorMessage = m => m === null ? <div style={{ display: 'inline-block' }} /> : <div className="LoginForm--errorText">{m}</div>;
 
     render() {
         return (
             <form className="LoginForm" onSubmit={this.handleSubmit} noValidate autoComplete="off">
 
-                    <input
-                        placeholder="Login"
-                        className="validate"
-                        ref="login"
-                        type="text"
-                        name="login"
-                        id="LoginForm--login"
-                        required
-                        onChange={this.handleChange}
-                        onPaste={this.handlePaste}
-                        autoComplete="off"
-                    />
+                <input
+                    placeholder="Login"
+                    className="validate"
+                    ref="login"
+                    type="text"
+                    name="login"
+                    id="LoginForm--login"
+                    required
+                    onChange={this.handleChange}
+                    onPaste={this.handlePaste}
+                    autoComplete="off"
+                />
 
-                    <input
-                        ref="password"
-                        type="password"
-                        name="password"
-                        className="validate"
-                        id="LoginForm--password"
-                        required
-                        onChange={this.handleChange}
-                        onPaste={this.handlePaste}
-                        placeholder="Password"
-                        autoComplete="off"
-                    />
-                    {this.errorMessage(this.state.serverError || this.state.error)}
+                <input
+                    ref="password"
+                    type="password"
+                    name="password"
+                    className="validate"
+                    id="LoginForm--password"
+                    required
+                    onChange={this.handleChange}
+                    onPaste={this.handlePaste}
+                    placeholder="Password"
+                    autoComplete="off"
+                />
+                {this.errorMessage(this.state.serverError || this.state.error)}
 
                 <button
-                    className="btn waves-effect waves-light"
+                    className="btn modal-action modal-close waves-effect waves-light"
                     type="submit"
                     name="action"
                     disabled={this.state.error !== ''}
                 >
-                Login
+                    Login
                 </button>
                 <Link
-                to="/"
-                className="modal-action modal-close waves-effect waves-green btn-flat"
-            >
-                Cancel
-            </Link>
-
+                    to="/"
+                    className="modal-action modal-close waves-effect waves-green btn-flat"
+                >
+                    Cancel
+                </Link>
             </form>
         );
     }

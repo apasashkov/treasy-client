@@ -1,12 +1,18 @@
-import React, { Component } from 'react';
-import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { NavLink } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { startLogOut } from '../actions/auth';
 
+import Auth from '../utils/Auth';
+
 class Header extends Component {
+    static propTypes = {
+        auth: PropTypes.object,
+        dispatch: PropTypes.func,
+    }
     constructor(props) {
         super(props);
-
         this.handleLogOut = this.handleLogOut.bind(this);
     }
     handleLogOut() {
@@ -26,7 +32,7 @@ class Header extends Component {
                     TREASY
                 </NavLink>
               <ul id="nav-mobile" className="right hide-on-med-and-down">
-                {this.props.auth.loggedIn ?
+                {this.props.auth.loggedIn || Auth.isUserAuthenticated() ?
                     <div style={{'userSelect': 'none', 'cursor': 'default'}}>
                         <li style={{'fontWeight' : '800', 'marginRight': '8px'}}> {this.props.auth.login} </li>
                         <li style={{'marginRight': '20px'}}><i className="material-icons">face</i></li>
@@ -49,5 +55,6 @@ const mapStateToProps = (state) => {
     return {
         auth: state.auth,
     };
-}
+};
+
 export default connect(mapStateToProps)(Header);

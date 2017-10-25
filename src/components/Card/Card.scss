@@ -1,9 +1,14 @@
+@import "../../constants/constants.scss";
+
 .card {
-    margin: 2%;
-    padding: 3px;
+    margin: 8px;
+    padding: 0 14px;
     user-select: none;
     word-break: break-all;
-
+    height:$CARD_HEIGHT;
+    border-radius: 6px;
+    cursor: pointer;
+    overflow: hidden;
 
     &:hover {
         background: darken(white, 5%);

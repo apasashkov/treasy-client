@@ -1,25 +1,38 @@
-import moment from 'moment';
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import moment from 'moment';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { startEditCard, startRemoveCard } from '../../actions/group';
 
 import 'react-dates/initialize';
 import { SingleDatePicker } from 'react-dates';
 import './_datepicker.css';
 
-import Modal from '../Modal';
 import EditableText from '../EditableText';
+import Modal from '../Modal';
 
 import './CardModal.scss';
 
 class CardModal extends Component {
-    constructor(props, context) {
-        super(props, context);
+    static propTypes = {
+        card: PropTypes.object,
+        cardId: PropTypes.string,
+        dispatch: PropTypes.func,
+    }
+    constructor(props) {
+
+        super(props);
+        const card = props.card || null;
+        const isLoading = (card === null);
 
         this.state = {
             calendarFocused: false,
+            isAddingDate: false,
+            isLoading,
+            dueDate: isLoading
+              ? null
+              : props.card.dueDate,
         };
 
         this.changeCardTitle = this.changeCardTitle.bind(this);
@@ -33,8 +46,13 @@ class CardModal extends Component {
         this.removeCard = this.removeCard.bind(this);
     }
 
-    static contextTypes = {
-        router: PropTypes.object,
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.card) {
+            this.setState({
+                isLoading: false,
+                dueDate: nextProps.card.dueDate,
+            });
+        }
     }
 
     changeCardTitle(newCardTitle) {
@@ -45,62 +63,69 @@ class CardModal extends Component {
         this.props.dispatch(startEditCard(this.props.cardId, { description: newCardDescription }));
     }
 
+
+
     renderCardDescription(description) {
         return (
-            <p>
+            <div>
                 <h5> Description: </h5>
                 <EditableText
                     onSubmit={this.changeCardDescription}
                     type="input"
                     text={description}
-                    fieldName="fieldName"
+                    className="CardModal--description"
                 />
-            </p>
-        )
+            </div>
+        );
     }
 
     renderCardDescriptionInput() {
         return (
-            <p style={{'textDecoration': 'underline'}}>
-            <EditableText
-                onSubmit={this.changeCardDescription}
-                type="input"
-                text={'Add description...'}
-                fieldName="fieldName"
-            />
-            </p>
-        )
+            <div style={{'textDecoration': 'underline'}}>
+                <EditableText
+                    onSubmit={this.changeCardDescription}
+                    type="input"
+                    text={'Add Description...'}
+                    className="CardModal--description"
+                />
+            </div>
+        );
     }
 
-    renderCardDueDate(dueDate) {
+    onDateChange(date) {
+        const dueDate = date === null ? 0 : date.valueOf();
+        this.setState({ dueDate, });
+        this.props.dispatch(startEditCard(this.props.cardId, { dueDate, }));
+    }
+
+
+    renderCardDueDate() {
         return (
             <div>
-            <p> Due Date: {moment(dueDate).format('YYYY MMM Do')} </p>
-            <SingleDatePicker
-                date={moment()}
-                onDateChange={this.onDateChange}
-                focused={this.state.calendarFocused}
-                onFocusChange={this.onFocusChange}
-                numberOfMonths={1}
-                isOutsideRange={(day => false)}
-            />
+                <h5>Due date: {this.state.dueDate ? moment(this.state.dueDate).format('YYYY MMM Do') : 'No Due Date'}</h5>
+                <SingleDatePicker
+                    date={this.state.dueDate ? moment(this.state.dueDate) : null}
+                    onDateChange={this.onDateChange}
+                    focused={this.state.calendarFocused}
+                    onFocusChange={this.onFocusChange}
+                    numberOfMonths={1}
+                    isOutsideRange={() => false}
+                    showClearDate
+                />
             </div>
-        )
+        );
     }
 
     renderDueDateInput() {
         return (
-            <p style={{'textDecoration': 'underline'}}>
+            <div onClick={() => this.setState({ isAddingDate: true })}
+            style={{'textDecoration': 'underline', 'cursor': 'pointer'}}>
                 Add Due Date...
-            </p>
-        )
+            </div>
+        );
     }
 
-    onDateChange() {
-        console.log(1110);
-    }
-
-    onFocusChange = ({ focused }) => {
+    onFocusChange({ focused }) {
         this.setState(() => ({ calendarFocused: focused }));
     }
 
@@ -108,16 +133,16 @@ class CardModal extends Component {
         this.props.dispatch(startRemoveCard({ cardId: this.props.cardId }));
     }
 
-    render() {
+    renderCardContent() {
         const card = this.props.card;
-        return (
-            <Modal id="Card--Modal">
+        return ( <div>
                 <h1>
                 <EditableText
                     onSubmit={this.changeCardTitle}
                     type="input"
                     text={card.cardTitle}
                     fieldName="fieldName"
+                    className="CardModal--title"
                 />
                 </h1>
                 {card.description ?
@@ -125,19 +150,29 @@ class CardModal extends Component {
                     this.renderCardDescriptionInput()
                 }
 
-                {card.dueDate ?
-                    this.renderCardDueDate(card.dueDate) :
+                { this.state.dueDate || this.state.isAddingDate ? this.renderCardDueDate(this.state.dueDate) :
                     this.renderDueDateInput()
                 }
+
                 <Link
                     className="modal-action modal-close waves-effect waves-light btn remove-button red"
                     onClick={this.removeCard}
                     to="/"
-
                 >
-                    Delete
+                    Remove Card
                 </Link>
+            </div>
+        );
+    }
 
+    render() {
+        return (
+            <Modal id="Card--Modal">
+                {
+                    this.state.isLoading
+                        ? 'LOADING...'
+                        : this.renderCardContent()
+                }
             </Modal>
         );
     }

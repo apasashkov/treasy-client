@@ -2,6 +2,8 @@ const groupReducerDefaultState = [];
 
 const groupReducer = (state = groupReducerDefaultState, action) => {
     switch (action.type) {
+    case 'ADD_GROUPS':
+        return [...state, ...action.groups];
     case 'ADD_GROUP':
         return [...state, action.group];
     case 'EDIT_GROUP':
@@ -25,6 +27,8 @@ const groupReducer = (state = groupReducerDefaultState, action) => {
             }
             return group;
         });
+    case 'MOVE_CARD':
+        return [...action.newGroups];
     case 'REMOVE_CARD':
         return state.map((group) => {
             return {
@@ -47,7 +51,6 @@ const groupReducer = (state = groupReducerDefaultState, action) => {
                 }),
             };
         });
-
     default:
         return state;
     }

@@ -1,36 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 import './EditableText.scss';
 
-const buttonCommon = {
-    backgroundColor: 'white',
-    border: 'none',
-    textDecoration: 'underline',
-    display: 'inline-block',
-    color: 'blue',
-    outline: 'none',
-};
-
-const centerDiv = {
-    margin: 'auto',
-    width: '10%',
-};
-
 class EditableText extends Component {
 
-    static defaultProps = {
-        fieldName: '',
-        status: '',
-        onSave: null,
-        style: {},
-        text: '',
-        type: 'input',
-    }
     static propTypes = {
-        status: PropTypes.string,
-        fieldName: PropTypes.string,
+        className:  PropTypes.string,
         onSave: PropTypes.func,
+        onSubmit: PropTypes.func,
         style: PropTypes.object,
         text: PropTypes.string,
         type: PropTypes.oneOf(['textarea', 'input']),
@@ -42,7 +21,7 @@ class EditableText extends Component {
         this.state = {
             editing: false,
             saving: false,
-            text: this.props.text,
+            text: this.props.text.trim(),
         };
 
         this.edit = this.edit.bind(this);
@@ -51,24 +30,13 @@ class EditableText extends Component {
         this.cancelEdit = this.cancelEdit.bind(this);
     }
 
-    // componentWillReceiveProps(nextProps) {
-    //     if (nextProps.status === 'success') {
-    //         this.setState({
-    //             saving: false,
-    //             editing: false });
-
-    //     } else if (nextProps.status === 'error') {
-    //         this.setState({
-    //             saving: false,
-    //             editing: false });
-    //     }
-    // }
-
     componentDidUpdate() {
         if(this.state.editing) {
             this.input.focus();
+            this.input.select();
         }
     }
+
     cancelEdit() {
         this.setState({ editing: false });
     }
@@ -92,16 +60,15 @@ class EditableText extends Component {
                 editing: false });
 
         } else {
-            this.props.onSubmit(this.input.value);
-            this.setState(() => ({ editing: false, saving:false, text: this.input.value || 'Input' }));
-            // this.props.onSave(this.input.value, this.props.fieldName);
+            this.props.onSubmit(this.input.value.trim());
+            this.setState(() => ({ editing: false, saving:false, text: this.input.value.trim() || '' }));
         }
     }
 
     handleKeyPress(e) {
         if (e.key === 'Enter') {
             this.props.onSubmit(this.input.value);
-            this.setState(() => ({ editing: false, saving:false, text: this.input.value || 'Input' }));
+            this.setState(() => ({ editing: false, saving:false, text: this.input.value.trim() || '' }));
         }
     }
 
@@ -125,24 +92,27 @@ class EditableText extends Component {
                     disabled={this.state.saving}
                     ref={(input) => { this.input = input; }}
                     spellCheck="false"
-                />);
+                    onBlur={this.saveEdit}
+                />
                 <button
-                    style={buttonCommon}
+
                     onClick={this.saveEdit}
                     disabled={this.state.saving}
+                    className="waves-effect waves-light btn green"
                 >
-                Save
+                    Save
                 </button>
                 <button
-                    style={buttonCommon}
+                    style={{'marginLeft': '10px'}}
                     onClick={this.cancelEdit}
                     disabled={this.state.saving}
+                    className="waves-effect waves-light btn red"
                 >
-                Cancel
+                    Cancel
                 </button>
-
             </div>
-    )}
+        );
+    }
 
     renderEditableElement() {
         switch (this.props.type) {
@@ -157,22 +127,32 @@ class EditableText extends Component {
     render() {
         if (this.state.editing) {
             return (
-                <div>
+                <div className={this.props.className}>
                     {this.renderEditableElement()}
                 </div>
             );
         }
 
+        const className = classNames(this.props.className, 'editableText');
+
         return (
                 <div
                     style={this.props.style}
                     onClick={this.edit}
-                    className="editableText"
+                    className={className}
                 >
                     {this.state.text}
                 </div>
         );
     }
 }
+
+EditableText.defaultProps = {
+    onSave: null,
+    style: {},
+    text: '',
+    type: '',
+    className: '',
+};
 
 export default EditableText;

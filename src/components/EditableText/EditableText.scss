@@ -2,6 +2,19 @@ input {
     width: 100%;
 }
 
+.editableText {
+    // height: 80px;
+}
 .editableText:hover {
     cursor: pointer;
+}
+
+// .editingText {
+//     height: 80px;
+// }
+
+textarea {
+    resize: none;
+    border: none;
+    width: 100%;
 }

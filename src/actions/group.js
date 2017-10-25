@@ -1,4 +1,38 @@
 import axios from 'axios';
+import Auth from '../utils/Auth';
+import { baseUrl } from '../config/config';
+
+const authConfig = {
+    'Authorization': `bearer ${Auth.getToken()}`
+};
+
+const addGroups = (groups) => ({
+    type: 'ADD_GROUPS',
+    groups,
+});
+
+// GET_GROUPS
+export const startGetGroups = () => {
+    return (dispatch) => {
+        axios.get(`${baseUrl}/api/groups`)
+        .then((response) => {
+            const groups = response.data;
+            groups.map((group) => {
+                group.groupId = group._id;
+                delete group._id;
+                group.cards.map((card) => {
+                    card.cardId = card._id;
+                    delete card._id;
+                });
+            });
+
+            dispatch(addGroups(groups));
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    };
+};
 
 // ADD_GROUP
 const addGroup = (group) => ({
@@ -11,7 +45,7 @@ export const startAddGroup = (cardGroupData = {}) => {
     return (dispatch) => {
         const { title = 'Group Title', cards = [] } = cardGroupData;
         const cardGroup = { title, cards };
-        axios.post('http://localhost:8000/api/groups', cardGroup )
+        axios.post(`${baseUrl}/api/groups`, cardGroup, {headers: authConfig} )
         .then((response) => {
             dispatch(addGroup({
                 ...cardGroup,
@@ -33,7 +67,7 @@ const editGroup = (groupId, updates) => ({
 
 export const startEditGroup = (groupId, updates) => {
     return (dispatch) => {
-        axios.post(`http://localhost:8000/api/groups/${groupId}`, updates)
+        axios.post(`${baseUrl}/api/groups/${groupId}`, updates, {headers: authConfig})
         .then(() => {
             dispatch(editGroup(groupId, updates));
         })
@@ -51,7 +85,7 @@ const removeGroup = ({ groupId } = {}) => ({
 
 export const startRemoveGroup = ({ groupId } = {}) => {
     return (dispatch) => {
-        axios.delete('http://localhost:8000/api/groups', { params: { id: groupId }})
+        axios.delete(`${baseUrl}/api/groups`, { params: { id: groupId }, headers: authConfig})
         .then(() => {
             dispatch(removeGroup( { groupId }));
         })
@@ -71,12 +105,12 @@ const addCard = (groupId, card) => ({
 export const startAddCard = (groupId, cardData = {}) => {
     return (dispatch) => {
         const { cardTitle = 'My card', dueDate = 0, description = '' } = cardData;
-        const card = { cardTitle, dueDate, description }
+        const card = { cardTitle, dueDate, description };
         const data = {
             card,
             groupId,
         };
-        axios.post('http://localhost:8000/api/cards', data )
+        axios.post(`${baseUrl}/api/cards`, data, {headers: authConfig} )
         .then((response) => {
             dispatch(addCard(groupId, {
                 ...card,
@@ -98,7 +132,7 @@ const editCard = (cardId, updates) => ({
 
 export const startEditCard = (cardId, updates) => {
     return (dispatch) => {
-        axios.post(`http://localhost:8000/api/cards/${cardId}`, updates)
+        axios.post(`${baseUrl}/api/cards/${cardId}`, updates, {headers: authConfig})
         .then(() => {
             dispatch(editCard(cardId, updates));
         })
@@ -108,6 +142,39 @@ export const startEditCard = (cardId, updates) => {
     };
 };
 
+//MOVE_CARD
+export const moveCard = (newGroups) => ({
+    type: 'MOVE_CARD',
+    newGroups,
+});
+
+export const startMoveCard = (lastX, lastY, nextX, nextY) => {
+    return (dispatch, getState) => {
+        const newGroups = [...getState().groups];
+        if (lastX === nextX) {
+          newGroups[lastX].cards.splice(nextY, 0, newGroups[lastX].cards.splice(lastY, 1)[0]);
+        } else {
+          // move element to new place
+          newGroups[nextX].cards.splice(nextY, 0, newGroups[lastX].cards[lastY]);
+          // delete element from old place
+          newGroups[lastX].cards.splice(lastY, 1);
+        }
+        // return newGroups;
+        const newGroupsToServer = [ newGroups[lastX], newGroups[nextX] ].map((group) => {
+            return {
+                groupId: group.groupId,
+                cards: group.cards.map((card) => card.cardId )
+            };
+        });
+        axios.post(`${baseUrl}/api/groups/moveCards`, newGroupsToServer, {headers: authConfig})
+        .then(() => {
+            dispatch(moveCard(newGroups));
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    };
+};
 
 // REMOVE_CARD
 const removeCard = ({ cardId } = {}) => ({
@@ -117,7 +184,7 @@ const removeCard = ({ cardId } = {}) => ({
 
 export const startRemoveCard = ({ cardId } = {}) => {
     return (dispatch) => {
-        axios.delete('http://localhost:8000/api/cards', { params: { id: cardId }})
+        axios.delete(`${baseUrl}/api/cards`, { params: { id: cardId }, headers: authConfig})
         .then(() => {
             dispatch(removeCard( { cardId }));
         })

@@ -1,9 +1,12 @@
 import React, {Component} from 'react';
+import Modal from './Modal';
 
 class NotFoundPage extends Component {
     render() {
         return (
-            <div> NotFoundPage page</div>
+            <Modal id="NotFoundPage--Modal">
+                <h1> Ooops, page not found....</h1>
+            </Modal>
         );
     }
 }
