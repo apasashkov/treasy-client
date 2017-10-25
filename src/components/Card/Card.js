@@ -1,14 +1,17 @@
 import moment from 'moment';
-import { Link } from 'react-router-dom';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { DragSource } from 'react-dnd';
 import { findDOMNode } from 'react-dom';
 
+import Auth from '../../utils/Auth';
 import './Card.scss';
 
 const cardSource = {
     beginDrag(props, monitor, component) {
+        if (!Auth.isUserAuthenticated()){
+            return;
+        }
         const { item, x, y } = props;
         const { cardId } = item;
         const { clientHeight } = findDOMNode(component);
@@ -16,7 +19,7 @@ const cardSource = {
     },
 
     endDrag(props, monitor) {
-        // document.getElementById(monitor.getItem().id).style.display = 'block';
+        document.getElementById(monitor.getItem().cardId).style.display = 'block';
         props.stopScrolling();
     },
 
@@ -39,6 +42,7 @@ class Card extends Component {
     static propTypes = {
         connectDragSource: PropTypes.func,
         item: PropTypes.object,
+        history: PropTypes.object,
     }
 
     static defaultProps = {
@@ -47,22 +51,29 @@ class Card extends Component {
 
     constructor(props) {
         super(props);
+
+        this.onCardClick = this.onCardClick.bind(this);
+    }
+
+    onCardClick() {
+        if (!Auth.isUserAuthenticated()) {
+            this.props.history.push(`/login`);
+            return;
+        }
+        this.props.history.push(`/cards/id=${this.props.item.cardId}`);
     }
 
     render() {
         const { connectDragSource, item } = this.props;
 
-
         return connectDragSource(
-            <div id={item.cardId} className="card">
-                <Link to={`/cards/id=${item.cardId}`}>
+            <div id={item.cardId} className="card" onClick={this.onCardClick}>
                     <h5>{item.cardTitle}</h5>
                     {
                         item.dueDate !== 0 ?
                             <p> Due: {moment(item.dueDate).format('YYYY MMM Do')} </p> :
                             <p> No Due Date </p>
                     }
-                </Link>
             </div>
         );
     }

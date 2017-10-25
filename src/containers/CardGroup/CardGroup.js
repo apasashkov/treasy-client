@@ -1,26 +1,22 @@
 import React, { Component } from 'react';
 import { DropTarget } from 'react-dnd';
 import PropTypes from 'prop-types';
-import { findDOMNode } from 'react-dom';
 
+import Auth from '../../utils/Auth';
 import Card from '../../components/Card/';
 import EditableText from '../../components/EditableText/';
-
-// !!!!important cant use Redux here, see DashBoard comments
+import { CARD_HEIGHT, OFFSET_HEIGHT, CARD_MARGIN } from '../../constants/constants';
 
 import './CardGroup.scss';
+
+
 
 // !!!!important ******************************
 // Cant use Redux here, see DashBoard comments
 // !!!!important ******************************
 
-const CARD_HEIGHT = 150; // height of a single card(excluding marginBottom/paddingBottom)
-const OFFSET_HEIGHT = 64 + 46 + 10 + 10 + 6; //  height offset from the top of the page
-const CARD_MARGIN = 10 + 10; // height of a marginBottom + paddingBottom
-
 function getPlaceholderIndex(y) {
     document.getElementsByClassName('dashboard')[0].scrollTop;
-    // const yPos = y - OFFSET_HEIGHT + window.scrollY;
     const yPos = y - OFFSET_HEIGHT + document.getElementsByClassName('dashboard')[0].scrollTop;
     let placeholderIndex;
     if (yPos < CARD_HEIGHT / 2) {
@@ -114,6 +110,7 @@ class CardGroup extends Component {
         changeGroupTitle: PropTypes.func,
         groupContent: PropTypes.object,
         isOver: PropTypes.bool,
+        history: PropTypes.object,
         removeGroup: PropTypes.func,
         submitCard: PropTypes.func,
         stopScrolling: PropTypes.func,
@@ -156,6 +153,18 @@ class CardGroup extends Component {
 
     changeGroupTitle(newGroupTitle) {
         this.props.changeGroupTitle(this.props.groupContent.groupId, { title: newGroupTitle });
+    }
+
+    renderRemoveGroupButton() {
+        return (
+            <div className="removeGroupButton">
+            <i
+                onClick={this.removeGroup}
+                className="material-icons small"
+            >remove
+            </i>
+        </div>
+        );
     }
 
     renderInput() {
@@ -211,6 +220,7 @@ class CardGroup extends Component {
                         x={x}
                         y={i}
                         item={item}
+                        history={this.props.history}
                         stopScrolling={this.props.stopScrolling}
                     />
                 );
@@ -234,30 +244,27 @@ class CardGroup extends Component {
             <div className="cardGroup">
                 <div className="cardGroupHeader">
                     <h5 className="cardGroupTitle">
-                        <EditableText
-                            onSubmit={this.changeGroupTitle}
-                            type="input"
-                            text={groupContent.title}
-                            fieldName="fieldName"
-                        />
+                        {!Auth.isUserAuthenticated() ?
+                            groupContent.title :
+                            <EditableText
+                                onSubmit={this.changeGroupTitle}
+                                type="input"
+                                text={groupContent.title}
+                                fieldName="fieldName"
+                            />
+                        }
                     </h5>
-                    <div className="removeGroupButton">
-                        <i
-                            onClick={this.removeGroup}
-                            className="material-icons small"
-                        >remove
-                        </i>
-                    </div>
+                    {Auth.isUserAuthenticated() && this.renderRemoveGroupButton() }
                 </div>
 
                 {cardList}
-                {this.state.isAdding && this.renderInput()}
-                {!this.state.isAdding &&
+                {this.state.isAdding && Auth.isUserAuthenticated() && this.renderInput()}
+                {!this.state.isAdding && Auth.isUserAuthenticated() &&
                     <i
                         onClick={this.addCard}
                         className="material-icons addCardButton"
                     >
-                    add
+                        add
                     </i>
                 }
             </div>

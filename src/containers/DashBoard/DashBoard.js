@@ -6,10 +6,13 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import AddGroupCard from '../../components/AddGroupCard/';
+import Auth from '../../utils/Auth';
 import CardGroup from '../CardGroup';
 import CardModal from '../../components/CardModal';
 import Login from '../../components/Login';
+import NotFoundPage from '../../components/NotFoundPage';
 import Registration from '../../components/Registration';
+
 import {
     startGetGroups,
     startAddCard,
@@ -20,10 +23,22 @@ import {
 
 import './DashBoard.scss';
 
+const urls = ['/', '/cards','/registration', '/login'];
+const matchHelper = (url, arr) => {
+    let isMatch = false;
+    arr.forEach((el) => {
+        if (url.indexOf(el) === 0) {
+            isMatch = true;
+        }
+    });
+    return isMatch;
+};
+
 class DashBoard extends Component {
     static propTypes = {
         dispatch: PropTypes.func,
         groups: PropTypes.array,
+        history: PropTypes.object,
         match: PropTypes.object.isRequired,
     }
 
@@ -132,6 +147,7 @@ class DashBoard extends Component {
             <CardGroup
                 key={cardGroup.groupId}
                 groupContent={cardGroup}
+                history={this.props.history}
 
                 startScrolling={this.startScrolling}
                 stopScrolling={this.stopScrolling}
@@ -148,11 +164,15 @@ class DashBoard extends Component {
         return (
             <div className="dashboard">
                 {cardGroups}
-                <AddGroupCard />
+
+                { Auth.isUserAuthenticated() && <AddGroupCard /> }
+
 
                 {this.props.match.url === '/login' && <Login />}
                 {this.props.match.url === '/registration' && <Registration />}
                 {this.props.match.params.id && <CardModal cardId={this.props.match.params.id}/>}
+                {!matchHelper(this.props.match.url, urls) && <NotFoundPage />}
+
             </div>
         );
     }
@@ -165,4 +185,6 @@ const mapStateToProps = (state) => {
 };
 
 export default flow(connect(mapStateToProps), DragDropContext(HTML5Backend))(DashBoard);
+
+
 

@@ -1,8 +1,14 @@
 .remove-button {
     float:right;
     margin-bottom: 10px;
-    // position: absolute;
-    // right: 15px;
-    // bottom: 15px;
+}
 
+.CardModal--description {
+    max-height: 200px;
+    overflow: auto;
+    margin-bottom:10px;
+}
+
+.CardModal--title {
+    height: 80px;
 }

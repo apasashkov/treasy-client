@@ -1,12 +1,15 @@
-import React, { Component } from 'react';
 import { connect } from 'react-redux';
-// import { addGroup } from '../../actions/group';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { startAddGroup } from '../../actions/group';
-
 
 import './AddGroupCard.scss';
 
 class AddGroupCard extends Component {
+
+    static propTypes = {
+        dispatch: PropTypes.func,
+    }
 
     constructor(props) {
         super(props);
@@ -19,20 +22,19 @@ class AddGroupCard extends Component {
         this.submitGroup = this.submitGroup.bind(this);
     }
 
+    componentDidUpdate() {
+        if(this.state.isAddingGroup) {
+            this.textarea.focus();
+        }
+    }
+
     addGroup() {
         this.setState(() => ({isAddingGroup: true}));
     }
 
     submitGroup() {
         this.setState(() => ({isAddingGroup: false}));
-        // this.props.dispatch(addGroup({ title:this.textarea.value }));
         this.props.dispatch(startAddGroup({ title:this.textarea.value }));
-    }
-
-    componentDidUpdate() {
-        if(this.state.isAddingGroup) {
-            this.textarea.focus();
-        }
     }
 
     renderInput() {
@@ -77,4 +79,4 @@ class AddGroupCard extends Component {
     }
 }
 
-export default connect()(AddGroupCard)
+export default connect()(AddGroupCard);

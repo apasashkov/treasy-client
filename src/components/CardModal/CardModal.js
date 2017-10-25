@@ -1,27 +1,38 @@
-import moment from 'moment';
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import moment from 'moment';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { startEditCard, startRemoveCard } from '../../actions/group';
 
 import 'react-dates/initialize';
 import { SingleDatePicker } from 'react-dates';
 import './_datepicker.css';
 
-import Modal from '../Modal';
 import EditableText from '../EditableText';
+import Modal from '../Modal';
 
 import './CardModal.scss';
 
 class CardModal extends Component {
-    constructor(props, context) {
-        super(props, context);
+    static propTypes = {
+        card: PropTypes.object,
+        cardId: PropTypes.string,
+        dispatch: PropTypes.func,
+    }
+    constructor(props) {
+
+        super(props);
+        const card = props.card || null;
+        const isLoading = (card === null);
 
         this.state = {
             calendarFocused: false,
             isAddingDate: false,
-            dueDate: this.props.card.dueDate,
+            isLoading,
+            dueDate: isLoading
+              ? null
+              : props.card.dueDate,
         };
 
         this.changeCardTitle = this.changeCardTitle.bind(this);
@@ -35,8 +46,13 @@ class CardModal extends Component {
         this.removeCard = this.removeCard.bind(this);
     }
 
-    static contextTypes = {
-        router: PropTypes.object,
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.card) {
+            this.setState({
+                isLoading: false,
+                dueDate: nextProps.card.dueDate,
+            });
+        }
     }
 
     changeCardTitle(newCardTitle) {
@@ -47,6 +63,8 @@ class CardModal extends Component {
         this.props.dispatch(startEditCard(this.props.cardId, { description: newCardDescription }));
     }
 
+
+
     renderCardDescription(description) {
         return (
             <div>
@@ -55,7 +73,7 @@ class CardModal extends Component {
                     onSubmit={this.changeCardDescription}
                     type="input"
                     text={description}
-                    fieldName="fieldName"
+                    className="CardModal--description"
                 />
             </div>
         );
@@ -67,23 +85,24 @@ class CardModal extends Component {
                 <EditableText
                     onSubmit={this.changeCardDescription}
                     type="input"
-                    text={'Add description...'}
-                    fieldName="fieldName"
+                    text={'Add Description...'}
+                    className="CardModal--description"
                 />
             </div>
-        )
+        );
     }
 
     onDateChange(date) {
-        const dueDate = date.valueOf();
+        const dueDate = date === null ? 0 : date.valueOf();
         this.setState({ dueDate, });
         this.props.dispatch(startEditCard(this.props.cardId, { dueDate, }));
     }
 
+
     renderCardDueDate() {
         return (
             <div>
-                <div>Due date: {this.state.dueDate ? moment(this.state.dueDate).format('YYYY MMM Do') : 'No Due Date'}</div>
+                <h5>Due date: {this.state.dueDate ? moment(this.state.dueDate).format('YYYY MMM Do') : 'No Due Date'}</h5>
                 <SingleDatePicker
                     date={this.state.dueDate ? moment(this.state.dueDate) : null}
                     onDateChange={this.onDateChange}
@@ -91,6 +110,7 @@ class CardModal extends Component {
                     onFocusChange={this.onFocusChange}
                     numberOfMonths={1}
                     isOutsideRange={() => false}
+                    showClearDate
                 />
             </div>
         );
@@ -102,7 +122,7 @@ class CardModal extends Component {
             style={{'textDecoration': 'underline', 'cursor': 'pointer'}}>
                 Add Due Date...
             </div>
-        )
+        );
     }
 
     onFocusChange = ({ focused }) => {
@@ -113,16 +133,16 @@ class CardModal extends Component {
         this.props.dispatch(startRemoveCard({ cardId: this.props.cardId }));
     }
 
-    render() {
+    renderCardContent() {
         const card = this.props.card;
-        return (
-            <Modal id="Card--Modal">
+        return ( <div>
                 <h1>
                 <EditableText
                     onSubmit={this.changeCardTitle}
                     type="input"
                     text={card.cardTitle}
                     fieldName="fieldName"
+                    className="CardModal--title"
                 />
                 </h1>
                 {card.description ?
@@ -139,8 +159,20 @@ class CardModal extends Component {
                     onClick={this.removeCard}
                     to="/"
                 >
-                    Delete
+                    Remove Card
                 </Link>
+            </div>
+        );
+    }
+
+    render() {
+        return (
+            <Modal id="Card--Modal">
+                {
+                    this.state.isLoading
+                        ? 'LOADING...'
+                        : this.renderCardContent()
+                }
             </Modal>
         );
     }
