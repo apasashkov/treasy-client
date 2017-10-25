@@ -133,7 +133,7 @@ class SignUpForm extends Component {
             if (f.validity.valueMissing) {
                 return new Error('*Required');
             }
-            this.checkLoginExists(f.value);
+            // this.checkLoginExists(f.value);
             return true;
         },
 
