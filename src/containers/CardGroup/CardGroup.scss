@@ -45,6 +45,9 @@
         width: 100%;
         resize:none;
     }
+    &:focus {
+       outline:none;
+    }
 }
 
 .closeButton {

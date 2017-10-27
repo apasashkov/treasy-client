@@ -126,11 +126,26 @@ class CardGroup extends Component {
         this.changeGroupTitle = this.changeGroupTitle.bind(this);
         this.submitCard = this.submitCard.bind(this);
         this.removeGroup = this.removeGroup.bind(this);
+        this.handleClickOutside = this.handleClickOutside.bind(this);
     }
 
     componentDidUpdate() {
-        if(this.state.isAdding) {
+        if (this.state.isAdding) {
             this.textarea.focus();
+        }
+    }
+
+    componentDidMount() {
+        document.addEventListener('mousedown', this.handleClickOutside);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('mousedown', this.handleClickOutside);
+    }
+
+    handleClickOutside(event) {
+        if (this.container && !this.container.contains(event.target)) {
+            this.setState(() => ({ isAdding: false }));
         }
     }
 
@@ -166,7 +181,11 @@ class CardGroup extends Component {
 
     renderInput() {
         return (
-            <div className="AddCard-container">
+            <div
+                className="AddCard-container"
+                ref={(container) => this.container = container }
+                tabIndex="0"
+            >
                 <textarea
                     ref={(ref) => { this.textarea = ref; }}
                     // onBlur={() => (this.setState(() => ({ isAdding: false })))}
